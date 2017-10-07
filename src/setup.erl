@@ -172,6 +172,9 @@ setup_node(NewCredentials, NewBindAddress, NodeCount, Port) ->
     % for single node setups, set n=1, for larger setups, don’t
     % exceed n=3 as a default
     config:set_integer("cluster", "n", min(NodeCount, 3)),
+    % for single node setups, set q=1, for larger setups, don’t
+    % exceed q=8 as a default
+    config:set_integer("cluster", "q", q(NodeCount)),
 
     case Port of
         undefined ->
@@ -182,6 +185,8 @@ setup_node(NewCredentials, NewBindAddress, NodeCount, Port) ->
             config:set_integer("chttpd", "port", Port)
     end.
 
+q(1) -> 1;
+q(_) -> 8.
 
 finish_cluster(Options) ->
     Dbs = proplists:get_value(ensure_dbs_exist, Options, cluster_system_dbs()),
